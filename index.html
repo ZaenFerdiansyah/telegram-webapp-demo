@@ -1,104 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hybrid WebApp Demo</title>
+  <meta charset="utf-8">
+  <title>FDB Viewer</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .form-box {
-      margin: 15px auto;
-      max-width: 400px;
-    }
-
-    select, input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button {
-      background: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    .status {
-      margin-top: 20px;
-      font-size: 0.95rem;
-      color: green;
-      display: none;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { color: #2c3e50; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    table, th, td { border: 1px solid #ddd; }
+    th, td { padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    pre { background: #f9f9f9; padding: 10px; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <h2>Hybrid WebApp Demo</h2>
-
-  <!-- Form Select -->
-  <div class="form-box">
-    <label for="nameSelect">Pilih Nama:</label>
-    <select id="nameSelect">
-      <option value="">-- pilih nama --</option>
-      <option value="Rendi">Rendi</option>
-      <option value="Irma">Irma</option>
-      <option value="Gupron">Gupron</option>
-      <option value="Afrizal">Afrizal</option>
-    </select>
-  </div>
-
-  <!-- Form Input + Search -->
-  <div class="form-box">
-    <label for="searchInput">Kode FDB:</label>
-    <input type="text" id="searchInput" placeholder="eg. GX-DPS-83274"/>
-    <button id="searchBtn">Search</button>
-  </div>
-
-  <!-- Status message -->
-  <div id="statusMsg" class="status">✅ Data terkirim ke bot!</div>
+  <h2>FDB JSON Result</h2>
+  <div id="meta"></div>
+  <table id="ports">
+    <thead>
+      <tr><th>Port</th><th>UID</th><th>Optional Info</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <script>
-    let tg = window.Telegram?.WebApp;
+    const params = new URLSearchParams(window.location.search);
+    const fileId = params.get("file_id");
 
-    document.getElementById("searchBtn").addEventListener("click", () => {
-      const name = document.getElementById("nameSelect").value;
-      const search = document.getElementById("searchInput").value.trim();
+    if (!fileId) {
+      document.body.innerHTML = "<p style='color:red'>No file_id provided!</p>";
+    } else {
+      const BOT_TOKEN = "7471839903:AAEtTRTDnCwky24nat6k5Ov6zEV6kvScWuc"; // ⚠️ must be safe (see note below)
 
-      if (!name) {
-        alert("Pilih nama dulu!");
-        return;
-      }
-      if (!search) {
-        alert("Isi kode FDB dulu!");
-        return;
-      }
-
-      const payload = {
-        name: name,
-        search: search,
-        timestamp: new Date().toISOString()
-      };
-
-      if (tg) {
-        tg.sendData(JSON.stringify(payload)); // kirim ke bot
-        document.getElementById("statusMsg").style.display = "block";
-      } else {
-        alert("Standalone mode:\n" + JSON.stringify(payload, null, 2));
-      }
-    });
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`)
+        .then(r => r.json())
+        .then(data => {
+          const filePath = data.result.file_path;
+          return fetch(`https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`);
+        })
+        .then(r => r.json())
+        .then(json => {
+          document.getElementById("meta").innerHTML = `
+            <p><b>FDB:</b> ${json.fdb}</p>
+            <p><b>Splitter:</b> ${json.splitter}</p>
+          `;
+          const tbody = document.querySelector("#ports tbody");
+          json.port_uid.forEach(p => {
+            const row = `<tr>
+              <td>${p.port}</td>
+              <td>${p.uid}</td>
+              <td>${p.optional_info ?? "-"}</td>
+            </tr>`;
+            tbody.insertAdjacentHTML("beforeend", row);
+          });
+        })
+        .catch(err => {
+          document.body.innerHTML = `<p style='color:red'>Error: ${err}</p>`;
+        });
+    }
   </script>
 </body>
 </html>
