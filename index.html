@@ -4,42 +4,46 @@
   <meta charset="utf-8">
   <title>FDB Viewer</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    table, th, td { border: 1px solid #ddd; }
+    th, td { padding: 8px; }
+    th { background: #f4f4f4; }
+  </style>
 </head>
 <body>
   <h2>FDB JSON Result</h2>
-  <div id="meta">Waiting for data...</div>
+  <div id="meta">Loading...</div>
   <table id="ports"><thead><tr><th>Port</th><th>UID</th><th>Info</th></tr></thead><tbody></tbody></table>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    const params = new URLSearchParams(window.location.search);
+    const jsonUrl = params.get("json");
 
-    console.log("[webapp] loaded, sending data request...");
-    tg.sendData("get_json"); // 🔑 Ask bot for data
+    if (!jsonUrl) {
+      document.getElementById("meta").innerText = "❌ No JSON URL provided";
+    } else {
+      fetch(jsonUrl)
+        .then(r => r.json())
+        .then(json => {
+          document.getElementById("meta").innerHTML = `
+            <p><b>FDB:</b> ${json.fdb}</p>
+            <p><b>Splitter:</b> ${json.splitter}</p>
+          `;
 
-    tg.onEvent("webAppData", (event) => {
-      console.log("[webapp] received event:", event);
-
-      try {
-        const json = JSON.parse(event.data);
-        console.log("[webapp] parsed JSON:", json);
-
-        document.getElementById("meta").innerHTML = `
-          <p><b>FDB:</b> ${json.fdb}</p>
-          <p><b>Splitter:</b> ${json.splitter}</p>
-        `;
-
-        const tbody = document.querySelector("#ports tbody");
-        tbody.innerHTML = "";
-        json.port_uid.forEach(p => {
-          tbody.insertAdjacentHTML("beforeend", `
-            <tr><td>${p.port}</td><td>${p.uid}</td><td>${p.optional_info ?? "-"}</td></tr>
-          `);
+          const tbody = document.querySelector("#ports tbody");
+          tbody.innerHTML = "";
+          json.port_uid.forEach(p => {
+            tbody.insertAdjacentHTML("beforeend", `
+              <tr><td>${p.port}</td><td>${p.uid}</td><td>${p.optional_info ?? "-"}</td></tr>
+            `);
+          });
+        })
+        .catch(err => {
+          document.getElementById("meta").innerText = "❌ Error loading: " + err;
         });
-      } catch (e) {
-        document.getElementById("meta").innerText = "❌ Error parsing data: " + e;
-      }
-    });
+    }
   </script>
 </body>
 </html>
