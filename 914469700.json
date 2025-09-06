@@ -1,0 +1,126 @@
+{
+  "fdb": "GX-ZEN-FDB",
+  "splitter": "SC/APC 1x8",
+  "port_uid": [
+    {
+      "port": 1,
+      "uid": "UID01ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 2,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 3,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 4,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 5,
+      "uid": "UID05ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 6,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 7,
+      "uid": "UID07ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 8,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 9,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 10,
+      "uid": "UID10ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 11,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 12,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 13,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 14,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 15,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 16,
+      "uid": "UID16ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 17,
+      "uid": "UID17ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 18,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 19,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 20,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 21,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 22,
+      "uid": "UID22ZEN",
+      "optional_info": null
+    },
+    {
+      "port": 23,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 24,
+      "uid": "UID24ZEN",
+      "optional_info": null
+    }
+  ]
+}
