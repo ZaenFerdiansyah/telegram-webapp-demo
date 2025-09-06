@@ -25,40 +25,38 @@
   </table>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const fileId = params.get("file_id");
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // expand WebApp to full screen
 
-    if (!fileId) {
-      document.body.innerHTML = "<p style='color:red'>No file_id provided!</p>";
-    } else {
-      const BOT_TOKEN = "7471839903:AAEtTRTDnCwky24nat6k5Ov6zEV6kvScWuc"; // ⚠️ must be safe (see note below)
+    // When bot sends data via answerWebAppQuery
+    tg.onEvent("mainButtonClicked", () => {
+      console.log("Main button clicked");
+    });
 
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`)
-        .then(r => r.json())
-        .then(data => {
-          const filePath = data.result.file_path;
-          return fetch(`https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`);
-        })
-        .then(r => r.json())
-        .then(json => {
-          document.getElementById("meta").innerHTML = `
-            <p><b>FDB:</b> ${json.fdb}</p>
-            <p><b>Splitter:</b> ${json.splitter}</p>
-          `;
-          const tbody = document.querySelector("#ports tbody");
-          json.port_uid.forEach(p => {
-            const row = `<tr>
-              <td>${p.port}</td>
-              <td>${p.uid}</td>
-              <td>${p.optional_info ?? "-"}</td>
-            </tr>`;
-            tbody.insertAdjacentHTML("beforeend", row);
-          });
-        })
-        .catch(err => {
-          document.body.innerHTML = `<p style='color:red'>Error: ${err}</p>`;
+    // Get data passed from bot
+    tg.onEvent("webAppData", (data) => {
+      try {
+        const json = JSON.parse(data.data);
+
+        document.getElementById("meta").innerHTML = `
+          <p><b>FDB:</b> ${json.fdb}</p>
+          <p><b>Splitter:</b> ${json.splitter}</p>
+        `;
+
+        const tbody = document.querySelector("#ports tbody");
+        tbody.innerHTML = "";
+        json.port_uid.forEach(p => {
+          const row = `<tr>
+            <td>${p.port}</td>
+            <td>${p.uid}</td>
+            <td>${p.optional_info ?? "-"}</td>
+          </tr>`;
+          tbody.insertAdjacentHTML("beforeend", row);
         });
-    }
+      } catch (err) {
+        document.body.innerHTML = `<p style="color:red">Error parsing data: ${err}</p>`;
+      }
+    });
   </script>
 </body>
 </html>
