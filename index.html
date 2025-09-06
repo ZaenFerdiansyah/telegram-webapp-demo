@@ -150,24 +150,25 @@
     console.log("ports after swap:", ports);
   }
 
-  document.getElementById("saveBtn").addEventListener("click", () => {
-    const payload = {
-      action: "save",
-      port_uid: ports,
-      fdb: data.fdb,
-      splitter: data.splitter
-    };
-    if (tg) {
-      try {
-        tg.sendData(JSON.stringify(payload));
-        showMsg("Sent updated JSON to bot (tg.sendData).");
-      } catch (e) {
-        showMsg("Failed to send to bot: " + e, true);
-      }
-    } else {
-      showMsg("No Telegram WebApp context detected.", true);
+document.getElementById("saveBtn").addEventListener("click", () => {
+  const payload = {
+    action: "save",
+    port_uid: ports,
+    fdb: data.fdb,
+    splitter: data.splitter
+  };
+  if (tg) {
+    try {
+      tg.sendData(JSON.stringify(payload)); // Send JSON to bot
+      showMsg("✅ Data sent to bot.");
+    } catch (e) {
+      showMsg("❌ Failed to send data: " + e, true);
     }
-  });
+  } else {
+    showMsg("❌ No Telegram WebApp context.", true);
+  }
+});
+
 
   function showMsg(txt, isErr=false){
     const el = document.getElementById("msg");
