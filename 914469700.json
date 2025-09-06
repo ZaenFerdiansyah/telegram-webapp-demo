@@ -1,20 +1,20 @@
 {
-  "fdb": "GX-Z-FDB",
+  "fdb": "GX-ZEN-FDB",
   "splitter": "SC/APC 1x8",
   "port_uid": [
     {
       "port": 1,
-      "uid": "UID01Z",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 2,
-      "uid": "UID02Z",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 3,
-      "uid": "UID03Z",
+      "uid": "UID03ZEN",
       "optional_info": null
     },
     {
@@ -24,12 +24,12 @@
     },
     {
       "port": 5,
-      "uid": "UID05Z",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 6,
-      "uid": "UID06Z",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -44,7 +44,7 @@
     },
     {
       "port": 9,
-      "uid": "UID09Z",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -54,17 +54,17 @@
     },
     {
       "port": 11,
-      "uid": "UID11Z",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 12,
-      "uid": "UID12Z",
+      "uid": "UID12ZEN",
       "optional_info": null
     },
     {
       "port": 13,
-      "uid": "-",
+      "uid": "UID13ZEN",
       "optional_info": null
     },
     {
@@ -79,27 +79,27 @@
     },
     {
       "port": 16,
-      "uid": "UID16Z",
+      "uid": "UID16ZEN",
       "optional_info": null
     },
     {
       "port": 17,
-      "uid": "-",
+      "uid": "UID17ZEN",
       "optional_info": null
     },
     {
       "port": 18,
-      "uid": "-",
+      "uid": "UID18ZEN",
       "optional_info": null
     },
     {
       "port": 19,
-      "uid": "UID19Z",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 20,
-      "uid": "-",
+      "uid": "UID20ZEN",
       "optional_info": null
     },
     {
@@ -119,7 +119,7 @@
     },
     {
       "port": 24,
-      "uid": "UID24Z",
+      "uid": "UID24ZEN",
       "optional_info": null
     }
   ]
