@@ -1,5 +1,5 @@
 {
-  "fdb": "GX-ZEN-FDB",
+  "fdb": "GX-TESSSSSS-FDB",
   "splitter": "SC/APC 1x8",
   "port_uid": [
     {
@@ -9,12 +9,12 @@
     },
     {
       "port": 2,
-      "uid": "-",
+      "uid": "UID02tessssss",
       "optional_info": null
     },
     {
       "port": 3,
-      "uid": "UID03ZEN",
+      "uid": "UID03tessssss",
       "optional_info": null
     },
     {
@@ -29,7 +29,7 @@
     },
     {
       "port": 6,
-      "uid": "-",
+      "uid": "UID06tessssss",
       "optional_info": null
     },
     {
@@ -39,12 +39,12 @@
     },
     {
       "port": 8,
-      "uid": "-",
+      "uid": "UID08tessssss",
       "optional_info": null
     },
     {
       "port": 9,
-      "uid": "-",
+      "uid": "UID09tessssss",
       "optional_info": null
     },
     {
@@ -54,52 +54,52 @@
     },
     {
       "port": 11,
-      "uid": "-",
+      "uid": "UID11tessssss",
       "optional_info": null
     },
     {
       "port": 12,
-      "uid": "UID12ZEN",
+      "uid": "UID12tessssss",
       "optional_info": null
     },
     {
       "port": 13,
-      "uid": "UID13ZEN",
+      "uid": "UID13tessssss",
       "optional_info": null
     },
     {
       "port": 14,
-      "uid": "-",
+      "uid": "UID14tessssss",
       "optional_info": null
     },
     {
       "port": 15,
-      "uid": "-",
+      "uid": "UID15tessssss",
       "optional_info": null
     },
     {
       "port": 16,
-      "uid": "UID16ZEN",
-      "optional_info": null
-    },
-    {
-      "port": 17,
-      "uid": "UID17ZEN",
-      "optional_info": null
-    },
-    {
-      "port": 18,
-      "uid": "UID18ZEN",
-      "optional_info": null
-    },
-    {
-      "port": 19,
       "uid": "-",
       "optional_info": null
     },
     {
+      "port": 17,
+      "uid": "UID17tessssss",
+      "optional_info": null
+    },
+    {
+      "port": 18,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 19,
+      "uid": "UID19tessssss",
+      "optional_info": null
+    },
+    {
       "port": 20,
-      "uid": "UID20ZEN",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -109,7 +109,7 @@
     },
     {
       "port": 22,
-      "uid": "-",
+      "uid": "UID22tessssss",
       "optional_info": null
     },
     {
@@ -119,7 +119,7 @@
     },
     {
       "port": 24,
-      "uid": "UID24ZEN",
+      "uid": "UID24tessssss",
       "optional_info": null
     }
   ]
