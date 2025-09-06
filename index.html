@@ -150,28 +150,41 @@
     console.log("ports after swap:", ports);
   }
 
-document.getElementById("saveBtn").addEventListener("click", () => {
-    const payload = {
-        port_uid: ports,
-        fdb: data.fdb,
-        splitter: data.splitter
-    };
+async function saveToNextcloud(filename, data) {
+  const webdavUrl = "https://nextcloud.dps.globalxtreme.net/remote.php/dav/files/reservation/" + filename;
+  const username = "reservation";
+  const password = "reservation2025"; // app password recommended
 
-    // Debug: show payload in alert and console
-    console.log("Payload to send:", payload);
-    alert("Payload to send:\n" + JSON.stringify(payload, null, 2));
+  try {
+    const res = await fetch(webdavUrl, {
+      method: "PUT",
+      headers: {
+        "Authorization": "Basic " + btoa(username + ":" + password),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data, null, 2)
+    });
 
-    // Optional: still send to Telegram WebApp
-    if (tg) {
-        try {
-            tg.sendData(JSON.stringify(payload));
-        } catch (err) {
-            console.error("Failed to send to bot:", err);
-        }
+    if (res.ok) {
+      alert("Saved to Nextcloud successfully!");
+    } else {
+      alert("Failed to save: " + res.status + " " + res.statusText);
     }
+  } catch (err) {
+    alert("Error: " + err);
+  }
+}
+
+// Usage when Save button clicked
+document.getElementById("saveBtn").addEventListener("click", () => {
+  const payload = {
+    port_uid: ports,
+    fdb: data.fdb,
+    splitter: data.splitter
+  };
+  
+  saveToNextcloud("fdb_result.json", payload);
 });
-
-
 
 
   function showMsg(txt, isErr=false){
