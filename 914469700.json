@@ -4,22 +4,22 @@
   "port_uid": [
     {
       "port": 1,
-      "uid": "-",
+      "uid": "UID01ZEN",
       "optional_info": null
     },
     {
       "port": 2,
-      "uid": "UID02ZEN",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 3,
-      "uid": "-",
+      "uid": "UID03ZEN",
       "optional_info": null
     },
     {
       "port": 4,
-      "uid": "-",
+      "uid": "UID04ZEN",
       "optional_info": null
     },
     {
@@ -29,17 +29,17 @@
     },
     {
       "port": 6,
-      "uid": "UID06ZEN",
-      "optional_info": null
-    },
-    {
-      "port": 7,
       "uid": "-",
       "optional_info": null
     },
     {
+      "port": 7,
+      "uid": "UID07ZEN",
+      "optional_info": null
+    },
+    {
       "port": 8,
-      "uid": "UID08ZEN",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -69,12 +69,12 @@
     },
     {
       "port": 14,
-      "uid": "UID14ZEN",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 15,
-      "uid": "-",
+      "uid": "UID15ZEN",
       "optional_info": null
     },
     {
@@ -84,32 +84,32 @@
     },
     {
       "port": 17,
-      "uid": "-",
+      "uid": "UID17ZEN",
       "optional_info": null
     },
     {
       "port": 18,
-      "uid": "-",
+      "uid": "UID18ZEN",
       "optional_info": null
     },
     {
       "port": 19,
-      "uid": "-",
+      "uid": "UID19ZEN",
       "optional_info": null
     },
     {
       "port": 20,
-      "uid": "UID20ZEN",
-      "optional_info": null
-    },
-    {
-      "port": 21,
       "uid": "-",
       "optional_info": null
     },
     {
+      "port": 21,
+      "uid": "UID21ZEN",
+      "optional_info": null
+    },
+    {
       "port": 22,
-      "uid": "UID22ZEN",
+      "uid": "-",
       "optional_info": null
     },
     {
