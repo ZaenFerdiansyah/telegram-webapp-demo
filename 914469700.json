@@ -4,7 +4,7 @@
   "port_uid": [
     {
       "port": 1,
-      "uid": "UID01APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -19,7 +19,7 @@
     },
     {
       "port": 4,
-      "uid": "-",
+      "uid": "UID04APAAAA",
       "optional_info": null
     },
     {
@@ -29,22 +29,22 @@
     },
     {
       "port": 6,
-      "uid": "-",
+      "uid": "UID06APAAAA",
       "optional_info": null
     },
     {
       "port": 7,
-      "uid": "UID07APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 8,
-      "uid": "UID08APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 9,
-      "uid": "UID09APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -54,22 +54,22 @@
     },
     {
       "port": 11,
-      "uid": "-",
+      "uid": "UID11APAAAA",
       "optional_info": null
     },
     {
       "port": 12,
-      "uid": "-",
+      "uid": "UID12APAAAA",
       "optional_info": null
     },
     {
       "port": 13,
-      "uid": "-",
+      "uid": "UID13APAAAA",
       "optional_info": null
     },
     {
       "port": 14,
-      "uid": "-",
+      "uid": "UID14APAAAA",
       "optional_info": null
     },
     {
@@ -84,7 +84,7 @@
     },
     {
       "port": 17,
-      "uid": "UID17APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -99,7 +99,7 @@
     },
     {
       "port": 20,
-      "uid": "UID20APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -109,17 +109,17 @@
     },
     {
       "port": 22,
-      "uid": "-",
+      "uid": "UID22APAAAA",
       "optional_info": null
     },
     {
       "port": 23,
-      "uid": "UID23APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 24,
-      "uid": "-",
+      "uid": "UID24APAAAA",
       "optional_info": null
     }
   ]
