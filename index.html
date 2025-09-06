@@ -14,30 +14,37 @@
   th, td { border: 1px solid #ddd; padding: 8px; text-align:center; }
   th { background:#f6f6f6; }
   .uid { display:inline-block; padding:6px 10px; border-radius:6px; background:#e8f6ff; cursor:grab; user-select:none; }
-  .uid[draggable="false"] { cursor: pointer; }
   .uid.dragging { opacity:0.5; }
   .uid.selected { outline:3px solid #ffcc80; background:#fff4e0; }
-  .hint { color:#666; font-size:13px; margin-top:8px; }
-  .controls { margin-top:12px; display:flex; gap:8px; }
+  .hint { color:#666; font-size:13px; margin-top:8px; margin-bottom:6px; }
+  .controls {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 8px 0;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid #ddd;
+    z-index: 10;
+  }
   button { padding:8px 12px; border-radius:6px; border:1px solid #ccc; background:white; cursor:pointer; }
-  #msg { margin-top:8px; color:green; }
+  #msg { margin-top:6px; font-weight:500; }
 </style>
 </head>
 <body>
   <h1>FDB Port Manager</h1>
   <div class="hint">Ports are fixed. Drag a UID onto another UID to <b>swap</b> (desktop). On mobile, tap one UID to select, then tap another to swap.</div>
 
+  <div id="msg"></div>
+
+  <div class="controls">
+    <button id="saveBtn">Save (send to bot)</button>
+  </div>
+
   <table id="portsTable" aria-label="Ports table">
     <thead><tr><th>Port</th><th>UID</th></tr></thead>
     <tbody id="portsBody"></tbody>
   </table>
-
-  <div class="controls">
-    <button id="saveBtn">Save (send to bot)</button>
-    <button id="downloadBtn">Download JSON</button>
-    <button id="reloadBtn">Reload from source</button>
-  </div>
-  <div id="msg"></div>
 
 <script>
 (async function(){
@@ -45,13 +52,12 @@
   if (tg) tg.expand();
 
   const params = new URLSearchParams(window.location.search);
-  const jsonUrl = params.get("json"); // e.g. raw.githubusercontent url
+  const jsonUrl = params.get("json");
   if (!jsonUrl) {
     document.getElementById("portsBody").innerHTML = '<tr><td colspan="2">No ?json= URL provided in query string.</td></tr>';
     return;
   }
 
-  // fetch JSON
   async function fetchJson(){
     const r = await fetch(jsonUrl, {cache: "no-store"});
     if (!r.ok) throw new Error("Fetch failed: " + r.status);
@@ -67,11 +73,10 @@
     return;
   }
 
-  // local ports array (copy)
   let ports = (data.port_uid || []).map(item => ({...item}));
 
   const tbody = document.getElementById("portsBody");
-  let selectedPort = null; // for tap-to-select swap
+  let selectedPort = null;
 
   function render(){
     tbody.innerHTML = "";
@@ -85,10 +90,8 @@
       div.className = "uid";
       div.textContent = p.uid;
       div.dataset.port = String(p.port);
-      // enable drag for desktop
       div.draggable = true;
 
-      // dragstart
       div.addEventListener("dragstart", (ev) => {
         ev.dataTransfer.setData("text/plain", ev.currentTarget.dataset.port);
         ev.currentTarget.classList.add("dragging");
@@ -96,12 +99,7 @@
       div.addEventListener("dragend", (ev) => {
         ev.currentTarget.classList.remove("dragging");
       });
-
-      // allow dropping onto UID elements
-      div.addEventListener("dragover", (ev) => {
-        ev.preventDefault(); // allow drop
-      });
-
+      div.addEventListener("dragover", (ev) => ev.preventDefault());
       div.addEventListener("drop", (ev) => {
         ev.preventDefault();
         const fromPort = ev.dataTransfer.getData("text/plain");
@@ -110,23 +108,18 @@
         swapUIDs(Number(fromPort), Number(toPort));
       });
 
-      // tap / click handler for mobile (and desktop)
       div.addEventListener("click", (ev) => {
         const portNum = Number(ev.currentTarget.dataset.port);
         if (selectedPort === null) {
-          // select
           selectedPort = portNum;
-          // highlight selected element
           clearSelectionVisual();
           ev.currentTarget.classList.add("selected");
           showMsg(`Selected UID at port ${portNum}. Tap another UID to swap.`);
         } else if (selectedPort === portNum) {
-          // deselect if same tapped again
           selectedPort = null;
           clearSelectionVisual();
           showMsg("Selection cleared.");
         } else {
-          // swap selectedPort <-> portNum
           swapUIDs(selectedPort, portNum);
           selectedPort = null;
           clearSelectionVisual();
@@ -146,10 +139,9 @@
 
   function swapUIDs(portA, portB){
     if (portA === portB) return;
-    const idxA = ports.findIndex(x => Number(x.port) === Number(portA));
-    const idxB = ports.findIndex(x => Number(x.port) === Number(portB));
+    const idxA = ports.findIndex(x => Number(x.port) === portA);
+    const idxB = ports.findIndex(x => Number(x.port) === portB);
     if (idxA === -1 || idxB === -1) return;
-    // swap uids
     const tmp = ports[idxA].uid;
     ports[idxA].uid = ports[idxB].uid;
     ports[idxB].uid = tmp;
@@ -158,12 +150,10 @@
     console.log("ports after swap:", ports);
   }
 
-  // Save: send updated JSON back to bot via tg.sendData
   document.getElementById("saveBtn").addEventListener("click", () => {
     const payload = {
       action: "save",
       port_uid: ports,
-      // keep other top-level fields if needed
       fdb: data.fdb,
       splitter: data.splitter
     };
@@ -179,43 +169,12 @@
     }
   });
 
-  // Download JSON locally
-  document.getElementById("downloadBtn").addEventListener("click", () => {
-    const out = { fdb: data.fdb, splitter: data.splitter, port_uid: ports };
-    const blob = new Blob([JSON.stringify(out, null, 2)], {type: "application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `fdb_${data.fdb || "result"}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    showMsg("Downloaded JSON locally.");
-  });
-
-  // Reload (refetch original JSON)
-  document.getElementById("reloadBtn").addEventListener("click", async () => {
-    showMsg("Reloading from source...");
-    try {
-      const fresh = await fetchJson();
-      data = fresh;
-      ports = (data.port_uid || []).map(x => ({...x}));
-      render();
-      showMsg("Reloaded.");
-    } catch (e) {
-      showMsg("Reload failed: " + e, true);
-    }
-  });
-
   function showMsg(txt, isErr=false){
     const el = document.getElementById("msg");
     el.textContent = txt;
     el.style.color = isErr ? "crimson" : "green";
-    setTimeout(()=> { if (el.textContent === txt) el.textContent = ""; }, 3500);
   }
 
-  // initial render
   render();
 })();
 </script>
