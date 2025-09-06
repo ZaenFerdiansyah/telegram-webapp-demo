@@ -6,37 +6,28 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    h2 { color: #2c3e50; }
     table { border-collapse: collapse; width: 100%; margin-top: 10px; }
     table, th, td { border: 1px solid #ddd; }
-    th, td { padding: 8px; text-align: left; }
+    th, td { padding: 8px; }
     th { background: #f4f4f4; }
-    pre { background: #f9f9f9; padding: 10px; border-radius: 6px; }
   </style>
 </head>
 <body>
   <h2>FDB JSON Result</h2>
-  <div id="meta"></div>
-  <table id="ports">
-    <thead>
-      <tr><th>Port</th><th>UID</th><th>Optional Info</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div id="meta">Waiting for data...</div>
+  <table id="ports"><thead><tr><th>Port</th><th>UID</th><th>Info</th></tr></thead><tbody></tbody></table>
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // expand WebApp to full screen
+    tg.expand();
 
-    // When bot sends data via answerWebAppQuery
-    tg.onEvent("mainButtonClicked", () => {
-      console.log("Main button clicked");
-    });
+    // Ask bot for JSON
+    tg.sendData("give_me_data");
 
-    // Get data passed from bot
-    tg.onEvent("webAppData", (data) => {
+    // Listen for bot response
+    tg.onEvent("webAppData", (event) => {
       try {
-        const json = JSON.parse(data.data);
+        const json = JSON.parse(event.data);
 
         document.getElementById("meta").innerHTML = `
           <p><b>FDB:</b> ${json.fdb}</p>
@@ -46,15 +37,12 @@
         const tbody = document.querySelector("#ports tbody");
         tbody.innerHTML = "";
         json.port_uid.forEach(p => {
-          const row = `<tr>
-            <td>${p.port}</td>
-            <td>${p.uid}</td>
-            <td>${p.optional_info ?? "-"}</td>
-          </tr>`;
-          tbody.insertAdjacentHTML("beforeend", row);
+          tbody.insertAdjacentHTML("beforeend", `
+            <tr><td>${p.port}</td><td>${p.uid}</td><td>${p.optional_info ?? "-"}</td></tr>
+          `);
         });
-      } catch (err) {
-        document.body.innerHTML = `<p style="color:red">Error parsing data: ${err}</p>`;
+      } catch (e) {
+        document.getElementById("meta").innerText = "Error parsing data: " + e;
       }
     });
   </script>
