@@ -22,9 +22,9 @@
     tg.expand();
 
     // Ask bot for JSON
-    tg.sendData("give_me_data");
+    tg.sendData("get_json");
 
-    // Listen for bot response
+    // When bot responds with JSON
     tg.onEvent("webAppData", (event) => {
       try {
         const json = JSON.parse(event.data);
@@ -42,7 +42,7 @@
           `);
         });
       } catch (e) {
-        document.getElementById("meta").innerText = "Error parsing data: " + e;
+        document.getElementById("meta").innerText = "❌ Error parsing data: " + e;
       }
     });
   </script>
