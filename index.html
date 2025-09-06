@@ -28,7 +28,7 @@
     async function loadData() {
       const params = new URLSearchParams(window.location.search);
       const jsonUrl = params.get("json");
-      if (!jsonUrl) return alert("No JSON provided");
+      if (!jsonUrl) return alert("No JSON providedddddd");
 
       const res = await fetch(jsonUrl);
       const data = await res.json();
