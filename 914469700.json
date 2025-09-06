@@ -9,12 +9,12 @@
     },
     {
       "port": 2,
-      "uid": "UID02AP",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 3,
-      "uid": "-",
+      "uid": "UID03AP",
       "optional_info": null
     },
     {
@@ -39,12 +39,12 @@
     },
     {
       "port": 8,
-      "uid": "UID08AP",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 9,
-      "uid": "-",
+      "uid": "UID09AP",
       "optional_info": null
     },
     {
@@ -54,47 +54,47 @@
     },
     {
       "port": 11,
-      "uid": "-",
+      "uid": "UID11AP",
       "optional_info": null
     },
     {
       "port": 12,
-      "uid": "-",
+      "uid": "UID12AP",
       "optional_info": null
     },
     {
       "port": 13,
-      "uid": "UID13AP",
-      "optional_info": null
-    },
-    {
-      "port": 14,
-      "uid": "UID14AP",
-      "optional_info": null
-    },
-    {
-      "port": 15,
-      "uid": "UID15AP",
-      "optional_info": null
-    },
-    {
-      "port": 16,
-      "uid": "UID16AP",
-      "optional_info": null
-    },
-    {
-      "port": 17,
       "uid": "-",
       "optional_info": null
     },
     {
+      "port": 14,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 15,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 16,
+      "uid": "-",
+      "optional_info": null
+    },
+    {
+      "port": 17,
+      "uid": "UID17AP",
+      "optional_info": null
+    },
+    {
       "port": 18,
-      "uid": "UID18AP",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 19,
-      "uid": "UID19AP",
+      "uid": "-",
       "optional_info": null
     },
     {
@@ -114,12 +114,12 @@
     },
     {
       "port": 23,
-      "uid": "-",
+      "uid": "UID23AP",
       "optional_info": null
     },
     {
       "port": 24,
-      "uid": "-",
+      "uid": "UID24AP",
       "optional_info": null
     }
   ]
