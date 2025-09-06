@@ -152,13 +152,25 @@
 
 document.getElementById("saveBtn").addEventListener("click", () => {
     const payload = {
-      action: "save",
-      port_uid: ports,
-      fdb: data.fdb,
-      splitter: data.splitter
+        port_uid: ports,
+        fdb: data.fdb,
+        splitter: data.splitter
     };
-    if (tg) tg.sendData(JSON.stringify(payload));
+
+    // Debug: show payload in alert and console
+    console.log("Payload to send:", payload);
+    alert("Payload to send:\n" + JSON.stringify(payload, null, 2));
+
+    // Optional: still send to Telegram WebApp
+    if (tg) {
+        try {
+            tg.sendData(JSON.stringify(payload));
+        } catch (err) {
+            console.error("Failed to send to bot:", err);
+        }
+    }
 });
+
 
 
 
