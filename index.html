@@ -1,49 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>FDB Viewer</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <title>FDB Port Manager</title>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    table, th, td { border: 1px solid #ddd; }
-    th, td { padding: 8px; }
-    th { background: #f4f4f4; }
+    table { border-collapse: collapse; width: 100%; max-width: 600px; margin: auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background: #f5f5f5; }
+    .uid { cursor: grab; background: #e0f7fa; padding: 5px; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <h2>FDB JSON Result</h2>
-  <div id="meta">Loading...</div>
-  <table id="ports"><thead><tr><th>Port</th><th>UID</th><th>Info</th></tr></thead><tbody></tbody></table>
+  <h2>FDB Ports</h2>
+  <table id="portsTable">
+    <thead>
+      <tr><th>Port</th><th>UID</th></tr>
+    </thead>
+    <tbody id="uidList">
+      <!-- Filled by JS -->
+    </tbody>
+  </table>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const jsonUrl = params.get("json");
+    // Fetch JSON from ?json=... parameter
+    async function loadData() {
+      const params = new URLSearchParams(window.location.search);
+      const jsonUrl = params.get("json");
+      if (!jsonUrl) return alert("No JSON provided");
 
-    if (!jsonUrl) {
-      document.getElementById("meta").innerText = "❌ No JSON URL provided";
-    } else {
-      fetch(jsonUrl)
-        .then(r => r.json())
-        .then(json => {
-          document.getElementById("meta").innerHTML = `
-            <p><b>FDB:</b> ${json.fdb}</p>
-            <p><b>Splitter:</b> ${json.splitter}</p>
-          `;
+      const res = await fetch(jsonUrl);
+      const data = await res.json();
 
-          const tbody = document.querySelector("#ports tbody");
-          tbody.innerHTML = "";
-          json.port_uid.forEach(p => {
-            tbody.insertAdjacentHTML("beforeend", `
-              <tr><td>${p.port}</td><td>${p.uid}</td><td>${p.optional_info ?? "-"}</td></tr>
-            `);
-          });
-        })
-        .catch(err => {
-          document.getElementById("meta").innerText = "❌ Error loading: " + err;
+      const tbody = document.getElementById("uidList");
+      data.port_uid.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p.port}</td>
+          <td class="uid" data-port="${p.port}">${p.uid}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Enable drag-and-drop only on UID column
+      const uidCells = tbody.querySelectorAll(".uid");
+      uidCells.forEach(cell => {
+        new Sortable(cell.parentNode, {
+          group: "uids",
+          animation: 150,
+          swap: true,
+          swapClass: "highlight",
+          onEnd: function (evt) {
+            // Swap text between dragged element and target
+            const from = evt.from.querySelector(".uid");
+            const to = evt.to.querySelector(".uid");
+            if (from && to && from !== to) {
+              const tmp = from.textContent;
+              from.textContent = to.textContent;
+              to.textContent = tmp;
+            }
+          }
         });
+      });
     }
+
+    loadData();
   </script>
 </body>
 </html>
