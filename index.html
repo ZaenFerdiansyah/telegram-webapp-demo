@@ -9,7 +9,16 @@
     table { border-collapse: collapse; width: 100%; max-width: 600px; margin: auto; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background: #f5f5f5; }
-    .uid { cursor: grab; background: #e0f7fa; padding: 5px; border-radius: 4px; }
+    .uid {
+      cursor: grab;
+      background: #e0f7fa;
+      padding: 5px;
+      border-radius: 4px;
+      margin: 2px;
+    }
+    .sortable-swap-highlight {
+      background: #ffe082 !important;
+    }
   </style>
 </head>
 <body>
@@ -19,12 +28,11 @@
       <tr><th>Port</th><th>UID</th></tr>
     </thead>
     <tbody id="uidList">
-      <!-- Filled by JS -->
+      <!-- Rows will be filled dynamically -->
     </tbody>
   </table>
 
   <script>
-    // Fetch JSON from ?json=... parameter
     async function loadData() {
       const params = new URLSearchParams(window.location.search);
       const jsonUrl = params.get("json");
@@ -38,30 +46,20 @@
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${p.port}</td>
-          <td class="uid" data-port="${p.port}">${p.uid}</td>
+          <td><div class="uid" data-port="${p.port}">${p.uid}</div></td>
         `;
         tbody.appendChild(row);
       });
 
-      // Enable drag-and-drop only on UID column
-      const uidCells = tbody.querySelectorAll(".uid");
-      uidCells.forEach(cell => {
-        new Sortable(cell.parentNode, {
-          group: "uids",
-          animation: 150,
-          swap: true,
-          swapClass: "highlight",
-          onEnd: function (evt) {
-            // Swap text between dragged element and target
-            const from = evt.from.querySelector(".uid");
-            const to = evt.to.querySelector(".uid");
-            if (from && to && from !== to) {
-              const tmp = from.textContent;
-              from.textContent = to.textContent;
-              to.textContent = tmp;
-            }
-          }
-        });
+      // Make UIDs draggable/swappable
+      new Sortable(tbody, {
+        animation: 150,
+        swap: true,              // swap mode
+        swapClass: "sortable-swap-highlight",
+        draggable: ".uid",       // only UIDs can be dragged
+        onEnd: function (evt) {
+          // Nothing else needed – swap is automatic
+        }
       });
     }
 
