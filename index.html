@@ -151,23 +151,15 @@
   }
 
 document.getElementById("saveBtn").addEventListener("click", () => {
-  const payload = {
-    action: "save",
-    port_uid: ports,
-    fdb: data.fdb,
-    splitter: data.splitter
-  };
-  if (tg) {
-    try {
-      tg.sendData(JSON.stringify(payload)); // Send JSON to bot
-      showMsg("✅ Data sent to bot.");
-    } catch (e) {
-      showMsg("❌ Failed to send data: " + e, true);
-    }
-  } else {
-    showMsg("❌ No Telegram WebApp context.", true);
-  }
+    const payload = {
+      action: "save",
+      port_uid: ports,
+      fdb: data.fdb,
+      splitter: data.splitter
+    };
+    if (tg) tg.sendData(JSON.stringify(payload));
 });
+
 
 
   function showMsg(txt, isErr=false){
