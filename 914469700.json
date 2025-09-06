@@ -1,5 +1,5 @@
 {
-  "fdb": "GX-APAAAA-FDB",
+  "fdb": "GX-AP-FDB",
   "splitter": "SC/APC 1x8",
   "port_uid": [
     {
@@ -9,7 +9,7 @@
     },
     {
       "port": 2,
-      "uid": "UID02APAAAA",
+      "uid": "UID02AP",
       "optional_info": null
     },
     {
@@ -19,7 +19,7 @@
     },
     {
       "port": 4,
-      "uid": "UID04APAAAA",
+      "uid": "UID04AP",
       "optional_info": null
     },
     {
@@ -29,7 +29,7 @@
     },
     {
       "port": 6,
-      "uid": "UID06APAAAA",
+      "uid": "UID06AP",
       "optional_info": null
     },
     {
@@ -39,7 +39,7 @@
     },
     {
       "port": 8,
-      "uid": "-",
+      "uid": "UID08AP",
       "optional_info": null
     },
     {
@@ -54,32 +54,32 @@
     },
     {
       "port": 11,
-      "uid": "UID11APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 12,
-      "uid": "UID12APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 13,
-      "uid": "UID13APAAAA",
+      "uid": "UID13AP",
       "optional_info": null
     },
     {
       "port": 14,
-      "uid": "UID14APAAAA",
+      "uid": "UID14AP",
       "optional_info": null
     },
     {
       "port": 15,
-      "uid": "UID15APAAAA",
+      "uid": "UID15AP",
       "optional_info": null
     },
     {
       "port": 16,
-      "uid": "-",
+      "uid": "UID16AP",
       "optional_info": null
     },
     {
@@ -89,12 +89,12 @@
     },
     {
       "port": 18,
-      "uid": "UID18APAAAA",
+      "uid": "UID18AP",
       "optional_info": null
     },
     {
       "port": 19,
-      "uid": "UID19APAAAA",
+      "uid": "UID19AP",
       "optional_info": null
     },
     {
@@ -104,12 +104,12 @@
     },
     {
       "port": 21,
-      "uid": "UID21APAAAA",
+      "uid": "-",
       "optional_info": null
     },
     {
       "port": 22,
-      "uid": "UID22APAAAA",
+      "uid": "UID22AP",
       "optional_info": null
     },
     {
@@ -119,7 +119,7 @@
     },
     {
       "port": 24,
-      "uid": "UID24APAAAA",
+      "uid": "-",
       "optional_info": null
     }
   ]
