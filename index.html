@@ -1,69 +1,223 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FDB Port Manager</title>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; max-width: 600px; margin: auto; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #f5f5f5; }
-    .uid {
-      cursor: grab;
-      background: #e0f7fa;
-      padding: 5px;
-      border-radius: 4px;
-      margin: 2px;
-    }
-    .sortable-swap-highlight {
-      background: #ffe082 !important;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FDB Port Manager — Drag/Swap UIDs</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+  body { font-family: system-ui, Arial; padding: 18px; max-width: 900px; margin: auto; }
+  h1 { font-size: 20px; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align:center; }
+  th { background:#f6f6f6; }
+  .uid { display:inline-block; padding:6px 10px; border-radius:6px; background:#e8f6ff; cursor:grab; user-select:none; }
+  .uid[draggable="false"] { cursor: pointer; }
+  .uid.dragging { opacity:0.5; }
+  .uid.selected { outline:3px solid #ffcc80; background:#fff4e0; }
+  .hint { color:#666; font-size:13px; margin-top:8px; }
+  .controls { margin-top:12px; display:flex; gap:8px; }
+  button { padding:8px 12px; border-radius:6px; border:1px solid #ccc; background:white; cursor:pointer; }
+  #msg { margin-top:8px; color:green; }
+</style>
 </head>
 <body>
-  <h2>FDB Ports</h2>
-  <table id="portsTable">
-    <thead>
-      <tr><th>Port</th><th>UID</th></tr>
-    </thead>
-    <tbody id="uidList">
-      <!-- Rows will be filled dynamically -->
-    </tbody>
+  <h1>FDB Port Manager</h1>
+  <div class="hint">Ports are fixed. Drag a UID onto another UID to <b>swap</b> (desktop). On mobile, tap one UID to select, then tap another to swap.</div>
+
+  <table id="portsTable" aria-label="Ports table">
+    <thead><tr><th>Port</th><th>UID</th></tr></thead>
+    <tbody id="portsBody"></tbody>
   </table>
 
-  <script>
-    async function loadData() {
-      const params = new URLSearchParams(window.location.search);
-      const jsonUrl = params.get("json");
-      if (!jsonUrl) return alert("No JSON provided");
+  <div class="controls">
+    <button id="saveBtn">Save (send to bot)</button>
+    <button id="downloadBtn">Download JSON</button>
+    <button id="reloadBtn">Reload from source</button>
+  </div>
+  <div id="msg"></div>
 
-      const res = await fetch(jsonUrl);
-      const data = await res.json();
+<script>
+(async function(){
+  const tg = window.Telegram?.WebApp;
+  if (tg) tg.expand();
 
-      const tbody = document.getElementById("uidList");
-      data.port_uid.forEach(p => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${p.port}</td>
-          <td><div class="uid" data-port="${p.port}">${p.uid}</div></td>
-        `;
-        tbody.appendChild(row);
+  const params = new URLSearchParams(window.location.search);
+  const jsonUrl = params.get("json"); // e.g. raw.githubusercontent url
+  if (!jsonUrl) {
+    document.getElementById("portsBody").innerHTML = '<tr><td colspan="2">No ?json= URL provided in query string.</td></tr>';
+    return;
+  }
+
+  // fetch JSON
+  async function fetchJson(){
+    const r = await fetch(jsonUrl, {cache: "no-store"});
+    if (!r.ok) throw new Error("Fetch failed: " + r.status);
+    return await r.json();
+  }
+
+  let data;
+  try {
+    data = await fetchJson();
+  } catch (e) {
+    document.getElementById("portsBody").innerHTML = `<tr><td colspan="2">Error loading JSON: ${e}</td></tr>`;
+    console.error(e);
+    return;
+  }
+
+  // local ports array (copy)
+  let ports = (data.port_uid || []).map(item => ({...item}));
+
+  const tbody = document.getElementById("portsBody");
+  let selectedPort = null; // for tap-to-select swap
+
+  function render(){
+    tbody.innerHTML = "";
+    for (const p of ports) {
+      const tr = document.createElement("tr");
+      const tdPort = document.createElement("td");
+      tdPort.textContent = p.port;
+      const tdUid = document.createElement("td");
+
+      const div = document.createElement("div");
+      div.className = "uid";
+      div.textContent = p.uid;
+      div.dataset.port = String(p.port);
+      // enable drag for desktop
+      div.draggable = true;
+
+      // dragstart
+      div.addEventListener("dragstart", (ev) => {
+        ev.dataTransfer.setData("text/plain", ev.currentTarget.dataset.port);
+        ev.currentTarget.classList.add("dragging");
+      });
+      div.addEventListener("dragend", (ev) => {
+        ev.currentTarget.classList.remove("dragging");
       });
 
-      // Make UIDs draggable/swappable
-      new Sortable(tbody, {
-        animation: 150,
-        swap: true,              // swap mode
-        swapClass: "sortable-swap-highlight",
-        draggable: ".uid",       // only UIDs can be dragged
-        onEnd: function (evt) {
-          // Nothing else needed – swap is automatic
+      // allow dropping onto UID elements
+      div.addEventListener("dragover", (ev) => {
+        ev.preventDefault(); // allow drop
+      });
+
+      div.addEventListener("drop", (ev) => {
+        ev.preventDefault();
+        const fromPort = ev.dataTransfer.getData("text/plain");
+        const toPort = ev.currentTarget.dataset.port;
+        if (!fromPort) return;
+        swapUIDs(Number(fromPort), Number(toPort));
+      });
+
+      // tap / click handler for mobile (and desktop)
+      div.addEventListener("click", (ev) => {
+        const portNum = Number(ev.currentTarget.dataset.port);
+        if (selectedPort === null) {
+          // select
+          selectedPort = portNum;
+          // highlight selected element
+          clearSelectionVisual();
+          ev.currentTarget.classList.add("selected");
+          showMsg(`Selected UID at port ${portNum}. Tap another UID to swap.`);
+        } else if (selectedPort === portNum) {
+          // deselect if same tapped again
+          selectedPort = null;
+          clearSelectionVisual();
+          showMsg("Selection cleared.");
+        } else {
+          // swap selectedPort <-> portNum
+          swapUIDs(selectedPort, portNum);
+          selectedPort = null;
+          clearSelectionVisual();
         }
       });
-    }
 
-    loadData();
-  </script>
+      tdUid.appendChild(div);
+      tr.appendChild(tdPort);
+      tr.appendChild(tdUid);
+      tbody.appendChild(tr);
+    }
+  }
+
+  function clearSelectionVisual(){
+    document.querySelectorAll(".uid.selected").forEach(el => el.classList.remove("selected"));
+  }
+
+  function swapUIDs(portA, portB){
+    if (portA === portB) return;
+    const idxA = ports.findIndex(x => Number(x.port) === Number(portA));
+    const idxB = ports.findIndex(x => Number(x.port) === Number(portB));
+    if (idxA === -1 || idxB === -1) return;
+    // swap uids
+    const tmp = ports[idxA].uid;
+    ports[idxA].uid = ports[idxB].uid;
+    ports[idxB].uid = tmp;
+    render();
+    showMsg(`Swapped UID port ${portA} ⇄ port ${portB}`);
+    console.log("ports after swap:", ports);
+  }
+
+  // Save: send updated JSON back to bot via tg.sendData
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    const payload = {
+      action: "save",
+      port_uid: ports,
+      // keep other top-level fields if needed
+      fdb: data.fdb,
+      splitter: data.splitter
+    };
+    if (tg) {
+      try {
+        tg.sendData(JSON.stringify(payload));
+        showMsg("Sent updated JSON to bot (tg.sendData).");
+      } catch (e) {
+        showMsg("Failed to send to bot: " + e, true);
+      }
+    } else {
+      showMsg("No Telegram WebApp context detected.", true);
+    }
+  });
+
+  // Download JSON locally
+  document.getElementById("downloadBtn").addEventListener("click", () => {
+    const out = { fdb: data.fdb, splitter: data.splitter, port_uid: ports };
+    const blob = new Blob([JSON.stringify(out, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `fdb_${data.fdb || "result"}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showMsg("Downloaded JSON locally.");
+  });
+
+  // Reload (refetch original JSON)
+  document.getElementById("reloadBtn").addEventListener("click", async () => {
+    showMsg("Reloading from source...");
+    try {
+      const fresh = await fetchJson();
+      data = fresh;
+      ports = (data.port_uid || []).map(x => ({...x}));
+      render();
+      showMsg("Reloaded.");
+    } catch (e) {
+      showMsg("Reload failed: " + e, true);
+    }
+  });
+
+  function showMsg(txt, isErr=false){
+    const el = document.getElementById("msg");
+    el.textContent = txt;
+    el.style.color = isErr ? "crimson" : "green";
+    setTimeout(()=> { if (el.textContent === txt) el.textContent = ""; }, 3500);
+  }
+
+  // initial render
+  render();
+})();
+</script>
 </body>
 </html>
