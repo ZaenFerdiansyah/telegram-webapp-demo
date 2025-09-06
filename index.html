@@ -4,30 +4,25 @@
   <meta charset="utf-8">
   <title>FDB Viewer</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    table, th, td { border: 1px solid #ddd; }
-    th, td { padding: 8px; }
-    th { background: #f4f4f4; }
-  </style>
 </head>
 <body>
   <h2>FDB JSON Result</h2>
-  <div id="meta">Waiting for da</div>
+  <div id="meta">Waiting for data...</div>
   <table id="ports"><thead><tr><th>Port</th><th>UID</th><th>Info</th></tr></thead><tbody></tbody></table>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Ask bot for JSON
-    tg.sendData("get_json");
+    console.log("[webapp] loaded, sending data request...");
+    tg.sendData("get_json"); // 🔑 Ask bot for data
 
-    // When bot responds with JSON
     tg.onEvent("webAppData", (event) => {
+      console.log("[webapp] received event:", event);
+
       try {
         const json = JSON.parse(event.data);
+        console.log("[webapp] parsed JSON:", json);
 
         document.getElementById("meta").innerHTML = `
           <p><b>FDB:</b> ${json.fdb}</p>
